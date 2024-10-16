@@ -15,6 +15,7 @@ class Endpoint:
     ONBOARDING_SSO_INIT = 'https://api.x.com/1.1/onboarding/sso_init.json'
     ACCOUNT_LOGOUT = 'https://api.twitter.com/1.1/account/logout.json'
     ONBOARDING_TASK = 'https://api.twitter.com/1.1/onboarding/task.json'
+    ONBOARDING_SSO_TASK = 'https://api.x.com/1.1/onboarding/sso_init.json'
     SETTINGS = 'https://api.twitter.com/1.1/account/settings.json'
     UPLOAD_MEDIA = 'https://upload.twitter.com/i/media/upload.json'
     UPLOAD_MEDIA_2 = 'https://upload.twitter.com/i/media/upload2.json'
@@ -71,19 +72,29 @@ class V11Client:
     async def onboarding_task(self, guest_token, token, subtask_inputs, data = None, **kwargs):
         if data is None:
             data = {}
-        if token is not None:
-            data['flow_token'] = token
-        if subtask_inputs is not None:
+        endpoint_url = Endpoint.ONBOARDING_TASK
+
+        if kwargs.get('flow_token') is not None:
+            data['flow_token'] = kwargs.pop('flow_token')
+        if subtask_inputs is not None and kwargs.get('input_flow_data') is None:
             data['subtask_inputs'] = subtask_inputs
 
+        if kwargs.get('input_flow_data') is not None:
+            data = kwargs.pop('input_flow_data')
+        if kwargs.get('sso') is not None:
+            data = kwargs.pop('sso')
+            endpoint_url = Endpoint.ONBOARDING_SSO_TASK
+
+
         headers = self.base._base_headers | {
-            'x-guest-token': guest_token
+            'X-Guest-Token': guest_token
         }
-        headers.pop('X-Twitter-Active-User')
+
+        #headers.pop('X-Twitter-Active-User')
         headers.pop('X-Twitter-Auth-Type')
 
         return await self.base.post(
-            Endpoint.ONBOARDING_TASK,
+            endpoint_url,
             json=data,
             headers=headers,
             **kwargs

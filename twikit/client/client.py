@@ -108,7 +108,7 @@ class Client:
 
         self._token = TOKEN
         self._user_id = None
-        self._user_agent = user_agent or 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_6_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.5 Safari/605.1.15'
+        self._user_agent = user_agent or 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
         self._act_as = None
 
         self.gql = GQLClient(self)
@@ -229,11 +229,11 @@ class Client:
         Base headers for Twitter API requests.
         """
         headers = {
-            'authorization': f'Bearer {self._token}',
-            'content-type': 'application/json',
+            'Authorization': f'Bearer {self._token}',
+            'Content-Type': 'application/json',
             'X-Twitter-Auth-Type': 'OAuth2Session',
             'X-Twitter-Active-User': 'yes',
-            'Referer': 'https://twitter.com/',
+            'Referer': 'https://x.com/',
             'User-Agent': self._user_agent,
         }
 
@@ -301,67 +301,66 @@ class Client:
 
         flow = Flow(self, guest_token)
 
-        await flow.execute_task(params={'flow_name': 'login'}, data={
-            'input_flow_data': {
-                'flow_context': {
-                    'debug_overrides': {},
-                    'start_location': {
-                        'location': 'splash_screen'
+        await flow.execute_task(input_flow_data={
+            "input_flow_data": {
+                "flow_context": {
+                    "debug_overrides": {},
+                    "start_location": {
+                        "location": "splash_screen"
                     }
                 }
             },
-            'subtask_versions': {
-                'action_list': 2,
-                'alert_dialog': 1,
-                'app_download_cta': 1,
-                'check_logged_in_account': 1,
-                'choice_selection': 3,
-                'contacts_live_sync_permission_prompt': 0,
-                'cta': 7,
-                'email_verification': 2,
-                'end_flow': 1,
-                'enter_date': 1,
-                'enter_email': 2,
-                'enter_password': 5,
-                'enter_phone': 2,
-                'enter_recaptcha': 1,
-                'enter_text': 5,
-                'enter_username': 2,
-                'generic_urt': 3,
-                'in_app_notification': 1,
-                'interest_picker': 3,
-                'js_instrumentation': 1,
-                'menu_dialog': 1,
-                'notifications_permission_prompt': 2,
-                'open_account': 2,
-                'open_home_timeline': 1,
-                'open_link': 1,
-                'phone_verification': 4,
-                'privacy_options': 1,
-                'security_key': 3,
-                'select_avatar': 4,
-                'select_banner': 2,
-                'settings_list': 7,
-                'show_code': 1,
-                'sign_up': 2,
-                'sign_up_review': 4,
-                'tweet_selection_urt': 1,
-                'update_users': 1,
-                'upload_media': 1,
-                'user_recommendations_list': 4,
-                'user_recommendations_urt': 1,
-                'wait_spinner': 3,
-                'web_modal': 1
+            "subtask_versions": {
+                "action_list": 2,
+                "alert_dialog": 1,
+                "app_download_cta": 1,
+                "check_logged_in_account": 1,
+                "choice_selection": 3,
+                "contacts_live_sync_permission_prompt": 0,
+                "cta": 7,
+                "email_verification": 2,
+                "end_flow": 1,
+                "enter_date": 1,
+                "enter_email": 2,
+                "enter_password": 5,
+                "enter_phone": 2,
+                "enter_recaptcha": 1,
+                "enter_text": 5,
+                "enter_username": 2,
+                "generic_urt": 3,
+                "in_app_notification": 1,
+                "interest_picker": 3,
+                "js_instrumentation": 1,
+                "menu_dialog": 1,
+                "notifications_permission_prompt": 2,
+                "open_account": 2,
+                "open_home_timeline": 1,
+                "open_link": 1,
+                "phone_verification": 4,
+                "privacy_options": 1,
+                "security_key": 3,
+                "select_avatar": 4,
+                "select_banner": 2,
+                "settings_list": 7,
+                "show_code": 1,
+                "sign_up": 2,
+                "sign_up_review": 4,
+                "tweet_selection_urt": 1,
+                "update_users": 1,
+                "upload_media": 1,
+                "user_recommendations_list": 4,
+                "user_recommendations_urt": 1,
+                "wait_spinner": 3,
+                "web_modal": 1
             }
-        })
-        await flow.sso_init('apple')
-        await flow.execute_task({
-            "subtask_id": "LoginJsInstrumentationSubtask",
-            "js_instrumentation": {
-                "response": await self._ui_metrix(),
-                "link": "next_link"
-            }
-        })
+        },params={'flow_name': 'login'})
+        flow_token = flow.token
+
+        await flow.execute_task(flow_token=flow_token, sso={"provider": "apple"})
+        #        await flow.execute_task({"subtask_id":"LoginJsInstrumentationSubtask","js_instrumentation":{"response":""},"link":"next_link"},flow_token=flow_token)
+        await flow.execute_task({"subtask_id":"LoginJsInstrumentationSubtask","js_instrumentation":{"response":"{\"rf\":{\"a4fc506d24bb4843c48a1966940c2796bf4fb7617a2d515ad3297b7df6b459b6\":121,\"bff66e16f1d7ea28c04653dc32479cf416a9c8b67c80cb8ad533b2a44fee82a3\":-1,\"ac4008077a7e6ca03210159dbe2134dea72a616f03832178314bb9931645e4f7\":-22,\"c3a8a81a9b2706c6fec42c771da65a9597c537b8e4d9b39e8e58de9fe31ff239\":-12},\"s\":\"ZHYaDA9iXRxOl2J3AZ9cc23iJx-Fg5E82KIBA_fgeZFugZGYzRtf8Bl3EUeeYgsK30gLFD2jTQx9fAMsnYCw0j8ahEy4Pb5siM5zD6n7YgOeWmFFaXoTwaGY4H0o-jQnZi5yWZRAnFi4lVuCVouNz_xd2BO2sobCO7QuyOsOxQn2CWx7bjD8vPAzT5BS1mICqUWyjZDjLnRZJU6cSQG5YFIHEPBa8Kj-v1JFgkdAfAMIdVvP7C80HWoOqYivQR7IBuOAI4xCeLQEdxlGeT-JYStlP9dcU5St7jI6ExyMeQnRicOcxXLXsan8i5Joautk2M8dAJFByzBaG4wtrPhQ3QAAAZEi-_t7\"}","link":"next_link"}},flow_token=flow_token)
+        flow_token = flow.token
+
         await flow.execute_task({
             'subtask_id': 'LoginEnterUserIdentifierSSO',
             'settings_list': {
@@ -375,7 +374,8 @@ class Client:
                 ],
                 'link': 'next_link'
             }
-        })
+        },flow_token=flow_token)
+        flow_token = flow.token
 
         if flow.task_id == 'LoginEnterAlternateIdentifierSubtask':
             await flow.execute_task({
@@ -384,7 +384,8 @@ class Client:
                     'text': auth_info_2,
                     'link': 'next_link'
                 }
-            })
+            },flow_token=flow_token)
+            flow_token = flow.token
 
         await flow.execute_task({
             'subtask_id': 'LoginEnterPassword',
@@ -392,9 +393,11 @@ class Client:
                 'password': password,
                 'link': 'next_link'
             }
-        })
+        },flow_token=flow_token)
+        flow_token = flow.token
 
         if flow.task_id == 'DenyLoginSubtask':
+            #raise TwitterException(flow.response)
             raise TwitterException(flow.response['subtasks'][0]['cta']['secondary_text']['text'])
 
         await flow.execute_task({
@@ -402,12 +405,13 @@ class Client:
             'check_logged_in_account': {
                 'link': 'AccountDuplicationCheck_false'
             }
-        })
+        },flow_token=flow_token)
 
         if not flow.response['subtasks']:
             return
 
         self._user_id = find_dict(flow.response, 'id_str', find_one=True)[0]
+        flow_token = flow.token
 
         if flow.task_id == 'LoginTwoFactorAuthChallenge':
             if totp_secret is None:
@@ -422,7 +426,7 @@ class Client:
                     'text': totp_code,
                     'link': 'next_link'
                 }
-            })
+            },flow_token=flow_token)
 
         if flow.task_id == 'LoginAcid':
             print(find_dict(flow.response, 'secondary_text', find_one=True)[0]['text'])
@@ -433,7 +437,7 @@ class Client:
                     'text': input('>>> '),
                     'link': 'next_link'
                 }
-            })
+            },flow_token=flow_token)
 
         return flow.response
 
