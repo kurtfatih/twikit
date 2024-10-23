@@ -132,6 +132,8 @@ class Client:
         except json.decoder.JSONDecodeError:
             response_data = response.text
 
+        print("RESPONSE:", json.dumps(response_data,indent=4))
+
         if isinstance(response_data, dict) and 'errors' in response_data:
             error_code = response_data['errors'][0]['code']
             error_message = response_data['errors'][0].get('message')
