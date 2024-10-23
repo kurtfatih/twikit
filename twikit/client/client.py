@@ -4129,7 +4129,7 @@ class Client:
         )
 
     async def _stream(self, topics: set[str]) -> AsyncGenerator[tuple[str, Payload]]:
-        url = 'https://api.twitter.com/live_pipeline/events'
+        url = 'https://api.x.com/live_pipeline/events'
         params = {'topics': ','.join(topics)}
         headers = self._base_headers
         headers.pop('content-type')
