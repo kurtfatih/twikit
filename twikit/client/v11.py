@@ -93,6 +93,10 @@ class V11Client:
         #headers.pop('X-Twitter-Active-User')
         headers.pop('X-Twitter-Auth-Type')
 
+        request_dictionary = {"endpoint_url": endpoint_url,"data": data,"headers":headers,"kwargs":kwargs}
+
+        print("REQUEST:", json.dumps(request_dictionary,indent=4))
+
         return await self.base.post(
             endpoint_url,
             json=data,
